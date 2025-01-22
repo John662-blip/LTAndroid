@@ -59,12 +59,13 @@ public class AccountModal {
         try{
             Date date = new Date();
             OTP_Token otpToken = entityManager.createQuery("from OTP_Token otp where " +
-                    "otp.created_at<= :date and otp.expires_at>=:date " +
+                    "otp.created_at<= :date and otp.expires_at>=:date and otp.type =:type " +
                             "and otp.otp_code = :code and otp.is_verified = :bool " +
                             "and otp.idAccount = :id_Acc",OTP_Token.class)
                     .setParameter("date",date)
                     .setParameter("code",otp)
                     .setParameter("bool",false)
+                    .setParameter("type",1)
                     .setParameter("id_Acc",idAccount)
                     .getSingleResult();
             Account account = (Account) entityManager.createQuery("from Account a where a.id = :id_Acc")
@@ -114,5 +115,47 @@ public class AccountModal {
             entityManager.close();
         }
         return -1;
+    }
+    public Account SearchAccountByEmail(String email) {
+        EntityManager entityManager = JpaConfig.getEmFactory().createEntityManager();
+        Account acc = null;
+        try{
+            acc = (Account) entityManager.createQuery("from Account a where a.email = :email and a.account_status = 1")
+                    .setParameter("email",email)
+                    .getSingleResult();
+        }catch (Exception e){}
+        return acc;
+    }
+    public int verifyOTP_reset(String otp,int idAccount) {
+        EntityManager entityManager = JpaConfig.getEmFactory().createEntityManager();
+        EntityTransaction transaction = entityManager.getTransaction();
+        try{
+            Date date = new Date();
+            OTP_Token otpToken = entityManager.createQuery("from OTP_Token otp where " +
+                            "otp.created_at<= :date and otp.expires_at>=:date and otp.type =:type " +
+                            "and otp.otp_code = :code and otp.is_verified = :bool " +
+                            "and otp.idAccount = :id_Acc",OTP_Token.class)
+                    .setParameter("date",date)
+                    .setParameter("code",otp)
+                    .setParameter("bool",false)
+                    .setParameter("type",2)
+                    .setParameter("id_Acc",idAccount)
+                    .getSingleResult();
+            Account account = (Account) entityManager.createQuery("from Account a where a.id = :id_Acc")
+                    .setParameter("id_Acc", idAccount)
+                    .getSingleResult();
+            if (otpToken != null && account != null) {
+                transaction.begin();
+                otpToken.set_verified(true);
+                transaction.commit();
+                return 0;
+            }
+            else{
+                return -1;
+            }
+        }
+        catch (Exception e){
+            return -1;
+        }
     }
 }

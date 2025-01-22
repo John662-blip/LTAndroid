@@ -22,7 +22,7 @@ public class OTPModal {
         }
         return OTP;
     }
-    public int InsertToken(int idAccount,String OTP){
+    public int InsertToken(int idAccount,String OTP,int type){
         EntityManager entityManager = JpaConfig.getEmFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try{
@@ -40,6 +40,7 @@ public class OTPModal {
             token.set_verified(false);
             token.setCreated_at(now);
             token.setExpires_at(new Date(expiresInMillis));
+            token.setType(type);
             transaction.begin();
             entityManager.persist(token);
             transaction.commit();
