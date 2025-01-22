@@ -15,4 +15,5 @@ public class OTP_TokenDTO {
     private Date created_at;
     private Date expires_at;
     private boolean is_verified;
+    private int type;
 }

@@ -76,10 +76,10 @@ public class AccountServlet extends HttpServlet {
         try {
             String email = jsonObject.getString("email");
             String password = jsonObject.getString("password");
-            String name = jsonObject.getString("name");
-            String phone = jsonObject.getString("phone");
+            String name = jsonObject.optString("name",null);
+            String phone = jsonObject.optString("phone",null);
             int idAccount = jsonObject.getInt("idAccount");
-            String avatar  = jsonObject.getString("avatar");
+            String avatar  = jsonObject.optString("avatar",null);
             int type = jsonObject.getInt("type");
             if (!valid.isValidEmail(email)){
                 result.put("errCode", 1);

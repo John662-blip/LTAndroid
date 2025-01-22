@@ -23,4 +23,6 @@ public class OTP_Token {
     private Date expires_at;
     @Column
     private boolean is_verified;//true : da su dung | false : chua su dung
+    @Column
+    private int type; //1: email 2 :reset password
 }
