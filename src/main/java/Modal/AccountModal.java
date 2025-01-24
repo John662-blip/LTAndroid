@@ -90,9 +90,8 @@ public class AccountModal {
         EntityManager entityManager = JpaConfig.getEmFactory().createEntityManager();
         EntityTransaction transaction = entityManager.getTransaction();
         try {
-            List<Account> lstAcc = entityManager.createQuery("from Account a where a.id = :idAccount and a.account_status = :accSta",Account.class)
-                    .setParameter("idAccount",idAccount)
-                    .setParameter("accSta",1).getResultList();
+            List<Account> lstAcc = entityManager.createQuery("from Account a where a.id = :idAccount",Account.class)
+                    .setParameter("idAccount",idAccount).getResultList();
             if (lstAcc.isEmpty()) {
                 return -1;
             }
