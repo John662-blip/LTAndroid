@@ -16,6 +16,7 @@ import java.io.IOException;
 public class AccountServlet extends HttpServlet {
     Valid valid = new Valid();
     AccountModal modal = new AccountModal();
+
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String path = req.getServletPath();
