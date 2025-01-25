@@ -157,4 +157,35 @@ public class AccountModal {
             return -1;
         }
     }
+    public int checkLogin(String email, String password) {
+        EntityManager entityManager = JpaConfig.getEmFactory().createEntityManager();
+        try {
+            // Tìm tài khoản trong cơ sở dữ liệu có account_status = 1
+            Account account = null;
+            try {
+                account = (Account) entityManager.createQuery("from Account a where a.email = :email and a.account_status = 1")
+                        .setParameter("email", email)
+                        .getSingleResult();
+            } catch (jakarta.persistence.NoResultException e) {
+                return -1; // Không tìm thấy tài khoản hoặc tài khoản không hoạt động
+            } catch (jakarta.persistence.NonUniqueResultException e) {
+                return -1; // Mã lỗi cho trường hợp có nhiều tài khoản trùng email
+            }
+
+            // Kiểm tra mật khẩu
+            if (account != null && account.getPassword().equals(password)) {
+                // Đăng nhập thành công, trả về ID tài khoản khi đăng nhập thành công
+                return account.getId(); // Trả về ID tài khoản
+            } else {
+                // Mật khẩu không chính xác
+                return -2; // Mã lỗi cho mật khẩu sai
+            }
+        } catch (Exception e) {
+            // Xử lý lỗi chung
+            e.printStackTrace();
+            return -1; // Trả về lỗi nếu gặp vấn đề trong quá trình xử lý
+        } finally {
+            entityManager.close();
+        }
+    }
 }
